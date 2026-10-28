@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+import type { FeatureCollection, Point } from "geojson";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { BANKS, type Atm } from "@/lib/atm/types";
@@ -28,7 +29,7 @@ const colorExpr: maplibregl.ExpressionSpecification = [
   "#8a8f98",
 ] as unknown as maplibregl.ExpressionSpecification;
 
-function toGeo(atms: Atm[]): GeoJSON.FeatureCollection {
+function toGeo(atms: Atm[]): FeatureCollection {
   return {
     type: "FeatureCollection",
     features: atms.map((a) => ({
@@ -95,18 +96,18 @@ export default function AtmMap({ atms, origin, focus, selectedId, onSelect }: Pr
           "circle-stroke-color": "#ffffff",
         },
       });
-      m.on("click", "clusters", async (e) => {
+      m.on("click", "clusters", async (e: maplibregl.MapLayerMouseEvent) => {
         const f = e.features?.[0];
         if (!f) return;
         const src = m.getSource("atms") as maplibregl.GeoJSONSource;
         const z = await src.getClusterExpansionZoom(f.properties.cluster_id);
-        m.easeTo({ center: (f.geometry as GeoJSON.Point).coordinates as [number, number], zoom: z });
+        m.easeTo({ center: (f.geometry as Point).coordinates as [number, number], zoom: z });
       });
-      m.on("click", "atm", (e) => {
+      m.on("click", "atm", (e: maplibregl.MapLayerMouseEvent) => {
         const id = e.features?.[0]?.properties?.id as string | undefined;
         if (id) onSelectRef.current(id);
       });
-      m.on("click", (e) => {
+      m.on("click", (e: maplibregl.MapMouseEvent) => {
         const hits = m.queryRenderedFeatures(e.point, { layers: ["atm", "clusters"] });
         if (!hits.length) onSelectRef.current(null);
       });

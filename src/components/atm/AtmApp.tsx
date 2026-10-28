@@ -62,7 +62,7 @@ export function AtmApp() {
     setSearching(true);
     try {
       const r = await geocode(q.trim());
-      if (r.length === 1) { goTo(r[0]); setResults(null); }
+      if (r.length === 1 && r[0]) { goTo(r[0]); setResults(null); }
       else setResults(r);
     } catch (err) {
       setToast((err as Error).message);

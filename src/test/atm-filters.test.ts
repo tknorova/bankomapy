@@ -18,6 +18,6 @@ describe("atm filters", () => {
     expect(applyFilters([a, b], { ...EMPTY_FILTERS, maxDistanceKm: 10 }, { lat: 50.08, lon: 14.42 })).toHaveLength(1);
   });
   it("filters by bank", () => {
-    expect(applyFilters([a, b], { ...EMPTY_FILTERS, banks: ["csob"] }, null)[0].id).toBe("osm-2");
+    expect(applyFilters([a, b], { ...EMPTY_FILTERS, banks: ["csob"] }, null)[0]?.id).toBe("osm-2");
   });
 });

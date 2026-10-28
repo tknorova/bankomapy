@@ -47,21 +47,21 @@ function address(t: Record<string, string>): string | null {
 
 export function normalizeOsm(el: { id: number; lat: number; lon: number; tags?: Record<string, string> }): Atm {
   const t = el.tags ?? {};
-  const operatorName = t.operator || t.brand || t.name || t.network || null;
-  const cashOut = tri(t.cash_out ?? t.cash_withdrawal);
+  const operatorName = t["operator"] || t["brand"] || t["name"] || t["network"] || null;
+  const cashOut = tri(t["cash_out"] ?? t["cash_withdrawal"]);
   return {
     id: `osm-${el.id}`,
     lat: el.lat,
     lon: el.lon,
-    bank: detectBank(t.brand || t.operator || t.name || null),
+    bank: detectBank(t["brand"] || t["operator"] || t["name"] || null),
     operatorName,
     address: address(t),
     cashOut,
-    cashIn: tri(t.cash_in, ["yes", "customers"]),
+    cashIn: tri(t["cash_in"], ["yes", "customers"]),
     coinsIn: tri(t["cash_in:coins"]),
     contactless: tri(t["authentication:contactless"]),
-    wheelchair: tri(t.wheelchair),
-    openingHours: t.opening_hours || null,
+    wheelchair: tri(t["wheelchair"]),
+    openingHours: t["opening_hours"] || null,
     source: "osm",
     sourceUrl: `https://www.openstreetmap.org/node/${el.id}`,
   };
